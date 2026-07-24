@@ -4,7 +4,7 @@ from sqlalchemy import select, delete
 
 from app.models.documents import Document
 from app.models.document_chunks import DocumentChunk
-from app.services.document_service import LOADER_MAP
+from app.langchain_app.loaders.factory import LOADER_MAP
 from app.langchain_app.splitters.text_splitter import split_documents
 
 # 每批插入的 chunk 数量（超大文件分批次处理）

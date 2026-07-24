@@ -10,12 +10,6 @@ class DocumentResponse(BaseModel):
     created_at: datetime
 
 
-class ParseTestResponse(BaseModel):
-    filename: str
-    pages: int
-    characters: int
-
-
 class ProcessResponse(BaseModel):
     document_id: int
     chunks: int

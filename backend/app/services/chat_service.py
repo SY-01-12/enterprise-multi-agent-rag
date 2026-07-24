@@ -30,14 +30,6 @@ async def ask_question_stream(
     question: str,
     session_id: int | None = None,
 ):
-    """SSE 流式 RAG 问答（异步生成器）。
-
-    与非流式 ask_question 的前置步骤相同（权限检查、Session 管理、检索），
-    但使用 LLM 的 stream 模式逐 token 输出 SSE 事件。
-
-    Yields:
-        str: SSE 格式的数据行，如 "data: 员工\n\n"
-    """
     import json
 
     is_general = (knowledge_base_id == 0)

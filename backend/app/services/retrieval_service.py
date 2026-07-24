@@ -45,6 +45,25 @@ def retrieve(kb_id: int, query: str, top_k: int = 5) -> list[LangchainDocument]:
     return chroma_docs
 
 
+"""
+输入是一堆 LangChain Document：
+  [
+    Document("员工试用期三个月", metadata={"source": "员工手册.pdf"}),
+    Document("年假每年15天",       metadata={"source": "员工手册.pdf"}),
+  ]
+ 
+  RAG 的流程：用户提问 → 检索到碎片 → 塞进 Prompt → LLM 回答。
+  但检索返回的是 Document 对象列表，不能直接拼进 Prompt。format_docs 就是把它们转成 LLM 能读的纯文本，带上编号和来源。
+  最终拼进 Prompt 大概长这样：
+  你是企业知识库助手。根据以下上下文回答：
+  [1] 来源: 员工手册.pdf
+  员工试用期三个月
+  [2] 来源: 员工手册.pdf
+  年假每年15天
+  用户问题：试用期多久？
+  LLM 看到编号和来源后，回答时就能引用"根据[1]..."，用户也知道信息来源。
+"""
+
 def format_docs(docs: list[LangchainDocument]) -> str:
 
     if not docs:
