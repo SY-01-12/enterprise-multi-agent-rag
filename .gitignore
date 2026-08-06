@@ -1,7 +1,48 @@
+# 环境变量
 .env
+backend/.env
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+*.egg
+
+# 测试 & IDE
 .pytest_cache/
 .idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+
+# 运行时数据
 data/
+backend/data/
+logs/
 *.log
+
+# 测试输出文件
+rag_*.txt
+answer_output.txt
+sse_debug*.txt
+img_answer.txt
+event_trace.txt
+all_events.txt
+
+# 依赖
+node_modules/
+
+# 前端构建产物
+frontend/dist/
+
+# Docker 相关（不打包镜像）
+*.tar
+*.tar.gz
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini

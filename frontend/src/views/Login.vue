@@ -22,14 +22,17 @@ async function handleLogin() {
 
   loading.value = true
   try {
-    const formData = new FormData()
-    formData.append('username', form.value.username)
-    formData.append('password', form.value.password)
+    const res = await request.post('/api/auth/login', {
+      username: form.value.username,
+      password: form.value.password,
+    })
+    const { access_token } = res.data
 
-    const res = await request.post('/api/auth/login', formData)
-    const { access_token, token_type } = res.data
-
-    userStore.setAuth(access_token, { username: form.value.username })
+    // 拉取完整用户信息（含 id、username、email 等）
+    const meRes = await request.get('/api/auth/me', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    })
+    userStore.setAuth(access_token, meRes.data)
     ElMessage.success('登录成功')
     router.push('/chat')
   } catch {
@@ -43,7 +46,7 @@ async function handleLogin() {
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h1 class="login-title">企业知识库 RAG 系统</h1>
+      <h1 class="login-title">企业 AI 助手</h1>
       <p class="login-subtitle">登录以继续</p>
 
       <el-form @submit.prevent="handleLogin" label-position="top">

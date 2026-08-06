@@ -46,7 +46,7 @@ async function handleRegister() {
   <div class="register-container">
     <div class="register-card">
       <h1 class="register-title">创建账号</h1>
-      <p class="register-subtitle">注册企业知识库 RAG 系统</p>
+      <p class="register-subtitle">注册企业 AI 助手账号</p>
 
       <el-form @submit.prevent="handleRegister" label-position="top">
         <el-form-item label="用户名">

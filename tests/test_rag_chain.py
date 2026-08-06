@@ -1,17 +1,16 @@
-"""RAG Chain 测试。
+"""RAG & Agent 测试。
 
 测试维度：
 1. format_docs — 文档格式化单元测试
-2. Prompt 渲染 — 验证模板变量填充正确
-3. Prompt 规则验证 — 确保规则语意完整
-4. RAG Chain 集成测试 — 需要 Ollama + Chroma 数据
+2. Agent Prompt — 验证 prompt 规则语意完整
+3. Agent 集成测试 — 需要 Ollama + Chroma 数据
 """
 
 import pytest
 from langchain_core.documents import Document as LangchainDocument
 
-from app.services.retrieval_service import format_docs
-from app.langchain_app.prompts.rag_prompt import get_rag_prompt, RAG_SYSTEM_TEMPLATE
+from app.utils.rag_utils import format_docs
+from app.agent.prompt import RAG_AGENT_PROMPT, GENERAL_AGENT_PROMPT
 
 
 # ══════════════════════════════════════════════════════
@@ -45,7 +44,7 @@ class TestFormatDocs:
         assert "[2]" in result
         assert "内容A" in result
         assert "内容B" in result
-        assert "\n\n" in result  # 空行分隔
+        assert "\n\n" in result
 
     def test_format_empty_docs(self):
         """空文档列表：返回提示语。"""
@@ -61,63 +60,52 @@ class TestFormatDocs:
 
 
 # ══════════════════════════════════════════════════════
-# 2. Prompt 模板测试
+# 2. Agent Prompt 规则验证
 # ══════════════════════════════════════════════════════
 
-class TestRagPrompt:
-    """测试 Prompt 模板的结构和规则。"""
+class TestAgentPrompt:
+    """测试 Agent Prompt 包含所有必要规则。"""
 
-    def test_prompt_structure(self):
-        """Prompt 包含 system + human 两条消息（空历史时不产生额外消息）。"""
-        prompt = get_rag_prompt()
-        messages = prompt.format_messages(
-            context="测试上下文",
-            chat_history=[],
-            question="测试问题？",
-        )
-        assert len(messages) == 2
-        assert messages[0].type == "system"
-        assert messages[1].type == "human"
-
-    def test_context_injection(self):
-        """context 变量被正确注入 system 消息。"""
-        prompt = get_rag_prompt()
-        messages = prompt.format_messages(
-            context="员工试用期为三个月。",
-            chat_history=[],
-            question="试用期多久？",
-        )
-        assert "员工试用期为三个月" in messages[0].content
-        assert "试用期多久？" == messages[1].content
-
-    def test_rules_present(self):
-        """Prompt 包含所有关键规则。"""
-        rules_to_check = [
-            "企业知识库智能助手",
-            "基于知识库",
-            "不知道就说不知道",
-            "知识库中没有找到相关信息",
-            "引用来源",
+    def test_rag_prompt_rules(self):
+        """RAG 模式 prompt 包含关键规则。"""
+        rules = [
+            "search_knowledge_base",
+            "检索",
+            "知识库",
+            "calculator",
+            "current_time",
+            "用中文简洁回答",
         ]
-        for rule in rules_to_check:
-            assert rule in RAG_SYSTEM_TEMPLATE, f"缺少规则: {rule}"
+        for rule in rules:
+            assert rule in RAG_AGENT_PROMPT, f"RAG prompt 缺少规则: {rule}"
 
-    def test_variables_in_template(self):
-        """模板包含必需的变量占位符。"""
-        assert "{context}" in RAG_SYSTEM_TEMPLATE
-        # {question} 在 human message 中（prompt.messages[2]，因为 [1] 是 MessagesPlaceholder）
-        prompt = get_rag_prompt()
-        human_msg = prompt.messages[2].prompt.template
-        assert "{question}" in human_msg
+    def test_general_prompt_rules(self):
+        """通用模式 prompt 包含关键规则，且不涉及知识库检索。"""
+        rules = [
+            "calculator",
+            "current_time",
+            "无法访问企业知识库",
+            "知识库检索",
+        ]
+        for rule in rules:
+            assert rule in GENERAL_AGENT_PROMPT, f"General prompt 缺少规则: {rule}"
+
+    def test_general_prompt_no_rag_tool(self):
+        """通用模式 prompt 不提及 search_knowledge_base（工具不存在）。"""
+        assert "search_knowledge_base" not in GENERAL_AGENT_PROMPT
+
+    def test_rag_prompt_has_rag_tool(self):
+        """RAG 模式 prompt 提及 search_knowledge_base。"""
+        assert "search_knowledge_base" in RAG_AGENT_PROMPT
 
 
 # ══════════════════════════════════════════════════════
-# 3. RAG Chain 集成测试（需要 Ollama）
+# 3. Agent 集成测试（需要 Ollama）
 # ══════════════════════════════════════════════════════
 
 @pytest.mark.integration
-class TestRagChainIntegration:
-    """需要 Ollama 运行且 Chroma 中有数据的集成测试。
+class TestAgentIntegration:
+    """需要 Ollama 运行的集成测试。
 
     运行方式：
         pytest tests/test_rag_chain.py -v -m integration
@@ -128,43 +116,13 @@ class TestRagChainIntegration:
         - Chroma 中有 kb_1 的 collection
     """
 
-    def test_ask_with_preset_context(self):
-        """用预设 context 测试 LLM 是否按规则回答（不依赖 Chroma）。"""
-        from app.langchain_app.prompts.rag_prompt import get_rag_prompt
-        from app.langchain_app.llm.ollama import get_llm
+    @pytest.mark.asyncio
+    async def test_supervisor_creates(self):
+        """验证 Supervisor Agent 可创建。"""
+        from app.agent.factory import create_app
 
-        llm = get_llm()
-        prompt = get_rag_prompt()
-        messages = prompt.format_messages(
-            context="[1] 来源: 员工手册.pdf\n员工试用期为三个月。",
-            chat_history=[],
-            question="员工试用期多久？",
-        )
-        response = llm.invoke(messages)
-        answer = response.content
-
-        # LLM 应该基于上下文回答
-        assert "三个月" in answer, f"期望提到'三个月'，实际回答: {answer}"
-
-    def test_unknown_question(self):
-        """知识库无相关内容时，LLM 应回复'知识库中没有找到相关信息'。"""
-        from app.langchain_app.prompts.rag_prompt import get_rag_prompt
-        from app.langchain_app.llm.ollama import get_llm
-
-        llm = get_llm()
-        prompt = get_rag_prompt()
-        messages = prompt.format_messages(
-            context="（知识库中暂无相关内容）",
-            chat_history=[],
-            question="今天的天气怎么样？",
-        )
-        response = llm.invoke(messages)
-        answer = response.content
-
-        # LLM 应拒绝回答或明确告知不知道
-        assert (
-            "知识库中没有找到相关信息" in answer
-            or "没有" in answer
-            or "无法" in answer
-            or "不知道" in answer
-        ), f"期望拒绝编造，实际回答: {answer}"
+        agent = await create_app(kb_id=1)
+        assert agent is not None
+        nodes = list(agent.get_graph().nodes.keys())
+        assert "rag_agent" in nodes
+        assert "general_agent" in nodes

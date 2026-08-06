@@ -21,7 +21,7 @@ function handleLogout() {
   <div id="app-root">
     <!-- 顶部导航（登录后显示） -->
     <nav v-if="showNav" class="top-nav">
-      <span class="nav-brand">企业知识库 RAG</span>
+      <span class="nav-brand">企业 AI 助手</span>
       <div class="nav-links">
         <router-link to="/chat" :class="{ active: route.path === '/chat' }">AI 问答</router-link>
         <router-link to="/knowledge" :class="{ active: route.path === '/knowledge' }">知识库管理</router-link>
@@ -58,6 +58,6 @@ html, body, #app { margin: 0; padding: 0; height: 100%; font-family: 'Microsoft 
 .nav-right { display: flex; align-items: center; gap: 12px; }
 .nav-user { color: rgba(255,255,255,0.85); font-size: 13px; }
 
-main.with-nav { height: calc(100vh - 50px); overflow: hidden; }
-main:not(.with-nav) { height: 100vh; overflow: hidden; }
+main.with-nav { height: calc(100vh - 50px); overflow-y: auto; }
+main:not(.with-nav) { height: 100vh; overflow-y: auto; }
 </style>

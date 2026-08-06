@@ -1,85 +1,134 @@
+version: "3.9"
+
+# ============================================================
+# Enterprise Multi-Agent RAG Assistant — 全线 Docker 部署
+# 启动: docker-compose up -d
+# 停止: docker-compose down
+# ============================================================
+
 services:
+  # ── MySQL 8.0 — 业务数据（用户/知识库/文档/会话）──
   mysql:
     image: mysql:8.0
     container_name: rag-mysql
     restart: unless-stopped
-
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123456}
+      MYSQL_DATABASE: ${MYSQL_DB:-langchain_rag}
+      MYSQL_USER: ${MYSQL_USER:-rag_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-123456}
       TZ: Asia/Shanghai
-
     ports:
-      - "${MYSQL_PORT}:3306"
-
+      - "${MYSQL_PORT:-3307}:3306"
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --default-time-zone=+08:00
-
     volumes:
       - ./data/mysql:/var/lib/mysql
-
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"
-        ]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
+    networks:
+      - rag-network
 
+  # ── Redis Stack — 短期记忆(Checkpoint) + 长期记忆(Store) ──
   redis:
-      image: redis:7.0
-      container_name: rag-redis
-      ports:
-        - "6379:6379"
-      volumes:
-        - ./data/redis:/data
-      command:
-        - redis-server
-        - --appendonly
-        - yes
+    image: redis/redis-stack:7.4.0-v0
+    container_name: rag-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+      - "8002:8001"
+    volumes:
+      - ./data/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - rag-network
 
-      healthcheck:
-          test: ["CMD", "redis-cli", "ping"]
-          interval: 10s
-          timeout: 5s
-          retries: 5
-          start_period: 30s
-
+  # ── ChromaDB — 向量数据库（Embedding 存储）──
   chromadb:
     image: chromadb/chroma:latest
     container_name: rag-chroma
     restart: unless-stopped
-
     ports:
-      - "8001:8000"
-
+      - "${CHROMA_PORT:-8001}:8000"
     volumes:
       - ./data/chroma:/chroma/chroma
-
     environment:
-      IS_PERSISTENT: TRUE
-      ANONYMIZED_TELEMETRY: FALSE
+      IS_PERSISTENT: "TRUE"
+      ANONYMIZED_TELEMETRY: "FALSE"
+    networks:
+      - rag-network
 
-
+  # ── Elasticsearch — 全文检索 BM25 ──
   elasticsearch:
     image: elasticsearch:8.15.0
     container_name: rag-elasticsearch
     restart: unless-stopped
-
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - E5_JAVA_OPTS=-Xms512m -Xmx512m
-
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
-      - "9200:9200"
-
+      - "${ELASTICSEARCH_PORT:-9200}:9200"
     volumes:
       - ./data/elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - rag-network
+
+  # ── Backend — FastAPI + LangGraph Agent ──
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rag-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      MYSQL_HOST: mysql
+      REDIS_HOST: redis
+      ELASTICSEARCH_HOST: elasticsearch
+      CHROMA_HOST: chromadb
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+    volumes:
+      - ./backend/data/uploads:/app/data/uploads
+    networks:
+      - rag-network
+
+  # ── Frontend — Vue.js + Nginx ──
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rag-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - backend
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+    driver: bridge
