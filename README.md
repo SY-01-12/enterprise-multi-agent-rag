@@ -115,33 +115,31 @@ Embedding 向量化 (DashScope text-embedding)
 
 ## 界面截图
 
-### 对话页面
+<details open>
+<summary><b>对话页面</b></summary>
+<br>
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/2e4b0a6e-6bb2-4dcc-a3df-42a418fbf4af.png" width="800">
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/bfd1946c-e7b9-49a6-94ab-eca8346a8a26.png" width="800">
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/e890073a-61ca-4648-b163-1325c5160286.png" width="800">
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/29fcbcd0-3289-48f4-a13a-3149a11af8c8.png" width="800">
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/20033cac-4072-41ac-ba5d-082474f648b5.png" width="800">
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/3d22a922-3fe2-4f28-aae4-003cf972cdd0.png" width="800">
+</details>
 
-![chat](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/2e4b0a6e-6bb2-4dcc-a3df-42a418fbf4af.png)
+<details open>
+<summary><b>知识库管理</b></summary>
+<br>
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/d4fcbad8-04f3-415a-8707-65cd3d440570.png" width="800">
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/98d30ce5-0021-4465-b062-779fd5147070.png" width="800">
+</details>
 
-![kb-qa](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/bfd1946c-e7b9-49a6-94ab-eca8346a8a26.png)
-
-![stream](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/e890073a-61ca-4648-b163-1325c5160286.png)
-
-![image](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/29fcbcd0-3289-48f4-a13a-3149a11af8c8.png)
-
-![multi](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/20033cac-4072-41ac-ba5d-082474f648b5.png)
-
-![memory](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/3d22a922-3fe2-4f28-aae4-003cf972cdd0.png)
-
-### 知识库管理
-
-![kb-list](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/d4fcbad8-04f3-415a-8707-65cd3d440570.png)
-
-![docs](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/98d30ce5-0021-4465-b062-779fd5147070.png)
-
-### AI 生成图片
-
-![gen1](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/10408e9d-c057-414c-8b7f-df871585f2af.png)
-
-![gen2](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/c8d6f803-e6c7-448d-a40f-35b24c413e1a.png)
-
-![gen3](https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/dff9f68b-85c6-4b49-8c56-552a43771f76.png)
+<details open>
+<summary><b>AI 生成图片</b></summary>
+<br>
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/10408e9d-c057-414c-8b7f-df871585f2af.png" width="400">
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/c8d6f803-e6c7-448d-a40f-35b24c413e1a.png" width="400">
+<img src="https://raw.githubusercontent.com/SY-01-12/enterprise-multi-agent-rag/main/pic/dff9f68b-85c6-4b49-8c56-552a43771f76.png" width="400">
+</details>
 
 ## 核心能力
 
