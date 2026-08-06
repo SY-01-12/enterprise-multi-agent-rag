@@ -1,6 +1,6 @@
 # Enterprise Multi-Agent RAG Assistant
 
-企业级智能知识库助手。基于 LangGraph + FastAPI + Vue3，集成知识库检索、图片生成、数学计算、跨会话记忆等一站式企业 AI 能力。
+企业级智能知识库助手。基于 LangGraph 单 Agent + FastAPI + Vue3，集成知识库检索、图片生成、数学计算、跨会话记忆等一站式企业 AI 能力。单 Agent 持有全部工具，LLM 自行决策调用哪个工具，免去 Supervisor 路由的复杂度和不稳定性。
 
 ## 系统架构
 
@@ -15,14 +15,15 @@
 │                Backend (FastAPI + LangGraph)              │
 │                                                          │
 │  ┌──────────────────────────────────────────────────┐   │
-│  │              LangGraph Agent                       │   │
+│  │           LangGraph 单 Agent（工具驱动）            │   │
 │  │  ┌─────────┐ ┌──────────┐ ┌────────────┐        │   │
 │  │  │RAG检索   │ │图片生成   │ │MCP工具      │        │   │
-│  │  │知识库    │ │wanx-v1   │ │计算/地图    │        │   │
+│  │  │ChromaDB  │ │wanx-v1   │ │计算/地图    │        │   │
+│  │  │+ES+RRF   │ │DashScope │ │FastMCP      │        │   │
 │  │  └─────────┘ └──────────┘ └────────────┘        │   │
 │  │  ┌──────────────────────────────────────────┐    │   │
-│  │  │     SummarizationMiddleware               │    │   │
-│  │  │     30轮触发摘要，保留20轮短期记忆          │    │   │
+│  │  │  SummarizationMiddleware                  │    │   │
+│  │  │  30轮触发摘要，保留20轮短期记忆             │    │   │
 │  │  └──────────────────────────────────────────┘    │   │
 │  └──────────────────────────────────────────────────┘   │
 │                                                          │
@@ -186,7 +187,7 @@ cd frontend && npm install && npm run dev
 
 | 层 | 技术 |
 |------|------|
-| Agent | LangGraph + langgraph-supervisor |
+| Agent | LangGraph 单 Agent（工具驱动意图识别）|
 | LLM | 阿里百炼 DashScope (qwen-turbo/plus/max) |
 | Embedding | DashScope text-embedding |
 | Web | FastAPI + SSE 流式 |
