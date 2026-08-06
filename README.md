@@ -115,56 +115,25 @@ Embedding 向量化 (DashScope text-embedding)
 
 ## 界面截图
 
-### 对话页面
+| 对话页面 | 知识库问答 |
+|----------|-----------|
+| ![chat](pic/2e4b0a6e-6bb2-4dcc-a3df-42a418fbf4af.png) | ![kb-qa](pic/bfd1946c-e7b9-49a6-94ab-eca8346a8a26.png) |
 
-<p align="center">
-  <img src="pic/2e4b0a6e-6bb2-4dcc-a3df-42a418fbf4af.png" width="80%" alt="对话界面">
-</p>
+| 流式回复 | 图片生成 |
+|----------|----------|
+| ![stream](pic/e890073a-61ca-4648-b163-1325c5160286.png) | ![image](pic/29fcbcd0-3289-48f4-a13a-3149a11af8c8.png) |
 
-<p align="center">
-  <img src="pic/bfd1946c-e7b9-49a6-94ab-eca8346a8a26.png" width="80%" alt="知识库问答">
-</p>
+| 多轮对话 | 记忆功能 |
+|----------|----------|
+| ![multi](pic/20033cac-4072-41ac-ba5d-082474f648b5.png) | ![memory](pic/3d22a922-3fe2-4f28-aae4-003cf972cdd0.png) |
 
-<p align="center">
-  <img src="pic/e890073a-61ca-4648-b163-1325c5160286.png" width="80%" alt="流式回复">
-</p>
+| 知识库列表 | 文档管理 |
+|----------|----------|
+| ![kb-list](pic/d4fcbad8-04f3-415a-8707-65cd3d440570.png) | ![docs](pic/98d30ce5-0021-4465-b062-779fd5147070.png) |
 
-<p align="center">
-  <img src="pic/29fcbcd0-3289-48f4-a13a-3149a11af8c8.png" width="80%" alt="图片生成">
-</p>
-
-<p align="center">
-  <img src="pic/20033cac-4072-41ac-ba5d-082474f648b5.png" width="80%" alt="多轮对话">
-</p>
-
-<p align="center">
-  <img src="pic/3d22a922-3fe2-4f28-aae4-003cf972cdd0.png" width="80%" alt="记忆功能">
-</p>
-
-### 知识库管理
-
-<p align="center">
-  <img src="pic/d4fcbad8-04f3-415a-8707-65cd3d440570.png" width="80%" alt="知识库列表">
-</p>
-
-<p align="center">
-  <img src="pic/98d30ce5-0021-4465-b062-779fd5147070.png" width="80%" alt="文档管理">
-</p>
-
-### 生成图片展示
-
-<p align="center">
-  <img src="pic/10408e9d-c057-414c-8b7f-df871585f2af.png" width="60%" alt="AI生成图片1">
-</p>
-
-<p align="center">
-  <img src="pic/c8d6f803-e6c7-448d-a40f-35b24c413e1a.png" width="60%" alt="AI生成图片2">
-</p>
-
-<p align="center">
-  <img src="pic/dff9f68b-85c6-4b49-8c56-552a43771f76.png" width="60%" alt="AI生成图片3">
-</p>
-```
+| AI 生成图片 |  |  |
+|-------------|--|--|
+| ![gen1](pic/10408e9d-c057-414c-8b7f-df871585f2af.png) | ![gen2](pic/c8d6f803-e6c7-448d-a40f-35b24c413e1a.png) | ![gen3](pic/dff9f68b-85c6-4b49-8c56-552a43771f76.png) |
 
 ## 核心能力
 
